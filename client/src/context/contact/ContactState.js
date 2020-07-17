@@ -65,7 +65,9 @@ const ContactState = (props) => {
   };
 
   // Update Contact
-  const updateContact = () => {};
+  const updateContact = (contact) => {
+    dispatch({ type: UPDATE_CURRENT, payload: contact });
+  };
 
   // Filter Contacts
 
