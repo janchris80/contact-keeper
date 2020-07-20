@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useContext } from 'react';
 import AlertContext from '../../context/alert/AlertContext';
+import AuthContext from '../../context/auth/AuthContext';
 
 const Register = (props) => {
   const [user, setUser] = useState({
@@ -13,8 +14,17 @@ const Register = (props) => {
   });
 
   const alertContext = useContext(AlertContext);
-  const { name, email, password, password2 } = user;
+  const authContext = useContext(AuthContext);
   const { setAlert } = alertContext;
+  const { register, error, clearErrors } = authContext;
+  const { name, email, password, password2 } = user;
+
+  useEffect(() => {
+    if (error) {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+  }, [error]);
 
   const onChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -27,7 +37,11 @@ const Register = (props) => {
     } else if (password !== password2) {
       setAlert('Password do not mtach', 'danger');
     } else {
-      console.log('Registered');
+      register({
+        name,
+        email,
+        password,
+      });
     }
   };
 
