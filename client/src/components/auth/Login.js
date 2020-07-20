@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import AlertContext from '../../context/alert/AlertContext';
+import AuthContext from '../../context/auth/AuthContext';
 
 const Login = (props) => {
   const [user, setUser] = useState({
@@ -8,7 +8,21 @@ const Login = (props) => {
     password: '',
   });
 
+  const alertContext = useContext(AlertContext);
+  const authContext = useContext(AuthContext);
+  const { setAlert } = alertContext;
+  const { login, error, clearErrors, isAuthenticated } = authContext;
   const { email, password } = user;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      props.history.push('/');
+    }
+    if (error) {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+  }, [error, isAuthenticated, props.history]);
 
   const onChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -16,7 +30,11 @@ const Login = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log('login');
+    if (!email || !password) {
+      setAlert('Please fill in the field', 'danger');
+    } else {
+      login({ email, password });
+    }
   };
 
   return (
@@ -27,7 +45,13 @@ const Login = (props) => {
       <form onSubmit={onSubmit}>
         <div className='form-group'>
           <label htmlFor='email'>Email</label>
-          <input type='email' name='email' value={email} onChange={onChange} />
+          <input
+            type='email'
+            name='email'
+            value={email}
+            onChange={onChange}
+            required
+          />
         </div>
         <div className='form-group'>
           <label htmlFor='password'>Password</label>
@@ -36,6 +60,7 @@ const Login = (props) => {
             name='password'
             value={password}
             onChange={onChange}
+            required
           />
         </div>
         <input
