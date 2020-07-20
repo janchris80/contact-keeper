@@ -1,0 +1,17 @@
+import React, { useContext } from 'react';
+import AlertContext from '../../context/alert/AlertContext';
+
+const Alerts = (props) => {
+  const alertContext = useContext(AlertContext);
+  const { alerts } = alertContext;
+  return (
+    alerts.length > 0 &&
+    alerts.map((alert, index) => (
+      <div key={index} className={`alert alert-${alert.type}`}>
+        <i className='fas fa-info-circle'>{alert.msg}</i>
+      </div>
+    ))
+  );
+};
+
+export default Alerts;
